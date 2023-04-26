@@ -1,32 +1,29 @@
 #!/usr/bin/env perl
 
-# Written for badsign
-# Now version 3 with caching.
-
 no warnings; 
 use strict; 
 use CGI::Carp qw(fatalsToBrowser); # don't just give Error 500 messages
 use CGI;
 use LWP; # that which grabs the imgur image
 
-my $dir = "/home/dissonant/dissonantbeats.com/i/cached/";
+my $cachedir = "/set/cache/dir/";
 
 my $q = CGI->new();
-my $user_agent = "ImgurProxy/1.0 Perl/5.10"; # fake imgur info
+my $user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"; # useragent passed to imgur
 my $img = $ENV{'QUERY_STRING'}; # get the imgur information
 
-if (-e "$dir/$img") { # cached
-	chomp(my $mime = qx!file -i $dir/$img!); #use `file` to get the mimetype
+if (-e "$cachedir/$img") { # cached
+	chomp(my $mime = qx!file -i $cachedir/$img!); #use `file` to get the mimetype
 	$mime =~ s/^.*?: //; #process
 	$mime =~ s/;.*//; #process more
 	$| = 1; # stdout hot
 	print "Content-type: $mime\n\n"; #output magic
 	use File::Copy;
-	copy "$dir/$img", \*STDOUT;
+	copy "$cachedir/$img", \*STDOUT;
 	
 } else {
 
-my @header = ('Referer'=>'http://www.dissonantbeats.com/i/', 'User-Agent'=>$user_agent);
+my @header = ('Referer'=>'https://imgur.com/', 'User-Agent'=>$user_agent);
 
 # virtual browser
 my $browser = LWP::UserAgent->new();
@@ -42,7 +39,7 @@ print "Content-type: " . $response->header("Content-Type") . "\n\n";
 print $response->content;
 
 #the caching
-open my $fh, ">", "cached/$img" or die "$!";
+open my $fh, ">", "$cachedir/$img" or die "$!";
 print $fh $response->content;
 close $fh;
 }
