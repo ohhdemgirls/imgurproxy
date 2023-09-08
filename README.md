@@ -15,3 +15,6 @@ Example: https://i.imgur.com/aaa8x.gif --> `https://your.host/cgi-bin/index.cgi?
   Example: `aaaa2.jpg --> removed.png` and `md5sum` is `d835884373f4d6c8f24742ceabe74946`
 
 * Add nesting to cache directory structure.
+
+* Add check cache for existing media and serve original or get suited format (jpg, png, gif, gifv, mp4)
+  Exmaple `aaa8x.jpg` --> `aaa8x.gif` or `aaa8x.mp4`
